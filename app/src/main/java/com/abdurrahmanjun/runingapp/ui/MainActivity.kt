@@ -1,8 +1,9 @@
-package com.abdurrahmanjun.runingapp
+package com.abdurrahmanjun.runingapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.abdurrahmanjun.runingapp.R
 import com.abdurrahmanjun.runingapp.db.RunDAO
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
