@@ -3,6 +3,7 @@ package com.abdurrahmanjun.runingapp.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -34,5 +35,10 @@ class MainActivity : AppCompatActivity() {
                         bottomNavigationView.visibility = View.GONE
                 }
             }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // menuInflater.inflate(R.menu.dashboard_menu,menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
