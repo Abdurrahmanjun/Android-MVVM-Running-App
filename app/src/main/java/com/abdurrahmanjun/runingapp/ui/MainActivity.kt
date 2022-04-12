@@ -3,9 +3,13 @@ package com.abdurrahmanjun.runingapp.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.abdurrahmanjun.runingapp.R
 import com.abdurrahmanjun.runingapp.db.RunDAO
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -18,6 +22,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("test", "RUNDAO: ${runDAO.hashCode()}")
+        setSupportActionBar(toolbar)
+        bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
+
+        navHostFragment.findNavController()
+            .addOnDestinationChangedListener { _, destination, _ ->
+                when(destination.id) {
+                    R.id.settingsFragment, R.id.runFragment, R.id.statisticFragment ->
+                        bottomNavigationView.visibility = View.VISIBLE
+                    else ->
+                        bottomNavigationView.visibility = View.GONE
+                }
+            }
     }
 }
