@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_MUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
@@ -70,14 +71,17 @@ class TrackingServices : LifecycleService() {
             when (it.action) {
                 ACTION_START_OR_RESUME_SERVICE -> {
                     if(isFirstRun) {
+                        Timber.d("Start Service ...")
                         startForegroundSerivce()
                         isFirstRun = false
                     } else {
                         Timber.d("Resume Service ...")
+                        startForegroundSerivce()
                     }
                 }
                 ACTION_PAUSE_SERVICE -> {
                     Timber.d("Service Pause!!")
+                    pauseService()
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.d("Service Stop!!")
@@ -85,6 +89,10 @@ class TrackingServices : LifecycleService() {
             }
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun pauseService() {
+        isTracking.postValue(false)
     }
 
     @SuppressLint("MissingPermission")
@@ -157,14 +165,27 @@ class TrackingServices : LifecycleService() {
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
 
-    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, MainActivity::class.java).also {
-            it.action = ACTION_SHOW_TRACKING_FRAGMENT
-        },
-        FLAG_UPDATE_CURRENT
-    )
+    private fun getMainActivityPendingIntent() : PendingIntent{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return PendingIntent.getActivity(
+                this,
+                0,
+                Intent(this, MainActivity::class.java).also {
+                    it.action = ACTION_SHOW_TRACKING_FRAGMENT
+                },
+                FLAG_MUTABLE
+            )
+        } else {
+            return PendingIntent.getActivity(
+                this,
+                0,
+                Intent(this, MainActivity::class.java).also {
+                    it.action = ACTION_SHOW_TRACKING_FRAGMENT
+                },
+                FLAG_UPDATE_CURRENT
+            )
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
