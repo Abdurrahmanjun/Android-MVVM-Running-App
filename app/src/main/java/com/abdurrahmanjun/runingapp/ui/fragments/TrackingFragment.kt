@@ -12,6 +12,7 @@ import com.abdurrahmanjun.runingapp.others.Constants.ACTION_START_OR_RESUME_SERV
 import com.abdurrahmanjun.runingapp.others.Constants.MAP_ZOOM
 import com.abdurrahmanjun.runingapp.others.Constants.POLYLINE_COLOR
 import com.abdurrahmanjun.runingapp.others.Constants.POLYLINE_WIDTH
+import com.abdurrahmanjun.runingapp.others.TrackingUtility
 import com.abdurrahmanjun.runingapp.services.Polyline
 import com.abdurrahmanjun.runingapp.services.TrackingServices
 import com.abdurrahmanjun.runingapp.ui.viewmodels.MainViewModel
@@ -31,6 +32,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     private var pathPoints = mutableListOf<Polyline>()
 
     private  var map : GoogleMap? = null
+
+    private var curTimeInMillis = 0L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,6 +66,12 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
             pathPoints = it
             addLatestPolyline()
             moveCameraUser()
+        })
+
+        TrackingServices.timeRunInMillis.observe(viewLifecycleOwner, Observer {
+            curTimeInMillis = it
+            val formattedTime = TrackingUtility.getFormattedStopWatchTime(curTimeInMillis, true)
+            tvTimer.text = formattedTime
         })
     }
 
