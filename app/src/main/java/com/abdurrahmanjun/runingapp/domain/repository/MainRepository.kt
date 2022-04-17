@@ -1,15 +1,15 @@
-package com.abdurrahmanjun.runingapp.repository
+package com.abdurrahmanjun.runingapp.domain.repository
 
-import com.abdurrahmanjun.runingapp.db.Run
-import com.abdurrahmanjun.runingapp.db.RunDAO
+import com.abdurrahmanjun.runingapp.data.persistence.models.Run
+import com.abdurrahmanjun.runingapp.data.persistence.RunDAO
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(
     private val runDao: RunDAO
 ) {
 
-    suspend fun insertRun(run:Run) = runDao.insertRun(run)
-    suspend fun deleteRun(run:Run) = runDao.deleteRun(run)
+    suspend fun insertRun(run: Run) = runDao.insertRun(run)
+    suspend fun deleteRun(run: Run) = runDao.deleteRun(run)
 
     fun getAllRunsSortedByDate() = runDao.getAllRunsSortedByDate()
 

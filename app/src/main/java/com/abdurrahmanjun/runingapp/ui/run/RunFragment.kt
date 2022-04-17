@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.ui.fragments
+package com.abdurrahmanjun.runingapp.ui.run
 
 import android.Manifest
 import android.os.Build
@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
-import com.abdurrahmanjun.runingapp.others.TrackingUtility
-import com.abdurrahmanjun.runingapp.ui.viewmodels.MainViewModel
+import com.abdurrahmanjun.runingapp.Constants.REQUEST_CODE_LOCATION_PERMISSION
+import com.abdurrahmanjun.runingapp.utils.TrackingUtility
+import com.abdurrahmanjun.runingapp.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_run.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions

@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.ui.fragments
+package com.abdurrahmanjun.runingapp.ui.settings
 
 import android.os.Bundle
 import android.view.View

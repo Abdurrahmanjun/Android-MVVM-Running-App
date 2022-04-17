@@ -1,7 +1,8 @@
-package com.abdurrahmanjun.runingapp.db
+package com.abdurrahmanjun.runingapp.data.persistence
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.abdurrahmanjun.runingapp.data.persistence.models.Run
 
 @Dao
 interface RunDAO {

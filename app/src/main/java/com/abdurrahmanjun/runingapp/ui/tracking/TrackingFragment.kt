@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.ui.fragments
+package com.abdurrahmanjun.runingapp.ui.tracking
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,18 +7,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.others.Constants.ACTION_PAUSE_SERVICE
-import com.abdurrahmanjun.runingapp.others.Constants.ACTION_START_OR_RESUME_SERVICE
-import com.abdurrahmanjun.runingapp.others.Constants.MAP_ZOOM
-import com.abdurrahmanjun.runingapp.others.Constants.POLYLINE_COLOR
-import com.abdurrahmanjun.runingapp.others.Constants.POLYLINE_WIDTH
-import com.abdurrahmanjun.runingapp.others.TrackingUtility
-import com.abdurrahmanjun.runingapp.services.Polyline
-import com.abdurrahmanjun.runingapp.services.TrackingServices
-import com.abdurrahmanjun.runingapp.ui.viewmodels.MainViewModel
+import com.abdurrahmanjun.runingapp.Constants.ACTION_PAUSE_SERVICE
+import com.abdurrahmanjun.runingapp.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.abdurrahmanjun.runingapp.Constants.MAP_ZOOM
+import com.abdurrahmanjun.runingapp.Constants.POLYLINE_COLOR
+import com.abdurrahmanjun.runingapp.Constants.POLYLINE_WIDTH
+import com.abdurrahmanjun.runingapp.utils.TrackingUtility
+import com.abdurrahmanjun.runingapp.domain.services.Polyline
+import com.abdurrahmanjun.runingapp.domain.services.TrackingServices
+import com.abdurrahmanjun.runingapp.ui.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*

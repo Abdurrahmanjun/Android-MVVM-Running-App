@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.services
+package com.abdurrahmanjun.runingapp.domain.services
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -18,16 +18,16 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.others.Constants.ACTION_PAUSE_SERVICE
-import com.abdurrahmanjun.runingapp.others.Constants.ACTION_SHOW_TRACKING_FRAGMENT
-import com.abdurrahmanjun.runingapp.others.Constants.ACTION_START_OR_RESUME_SERVICE
-import com.abdurrahmanjun.runingapp.others.Constants.ACTION_STOP_SERVICE
-import com.abdurrahmanjun.runingapp.others.Constants.FASTEST_LOCATION_INTERVAL
-import com.abdurrahmanjun.runingapp.others.Constants.LOCATION_UPDATE_INTERVAL
-import com.abdurrahmanjun.runingapp.others.Constants.NOTIFICATION_CHANNEL_ID
-import com.abdurrahmanjun.runingapp.others.Constants.NOTIFICATION_CHANNEL_NAME
-import com.abdurrahmanjun.runingapp.others.Constants.NOTIFICATION_ID
-import com.abdurrahmanjun.runingapp.others.TrackingUtility
+import com.abdurrahmanjun.runingapp.Constants.ACTION_PAUSE_SERVICE
+import com.abdurrahmanjun.runingapp.Constants.ACTION_SHOW_TRACKING_FRAGMENT
+import com.abdurrahmanjun.runingapp.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.abdurrahmanjun.runingapp.Constants.ACTION_STOP_SERVICE
+import com.abdurrahmanjun.runingapp.Constants.FASTEST_LOCATION_INTERVAL
+import com.abdurrahmanjun.runingapp.Constants.LOCATION_UPDATE_INTERVAL
+import com.abdurrahmanjun.runingapp.Constants.NOTIFICATION_CHANNEL_ID
+import com.abdurrahmanjun.runingapp.Constants.NOTIFICATION_CHANNEL_NAME
+import com.abdurrahmanjun.runingapp.Constants.NOTIFICATION_ID
+import com.abdurrahmanjun.runingapp.utils.TrackingUtility
 import com.abdurrahmanjun.runingapp.ui.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback

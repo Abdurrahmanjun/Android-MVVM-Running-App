@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.db
+package com.abdurrahmanjun.runingapp.data.persistence.models
 
 import android.graphics.Bitmap
 import androidx.room.Entity

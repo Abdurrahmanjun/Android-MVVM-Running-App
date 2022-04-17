@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.ui.fragments
+package com.abdurrahmanjun.runingapp.ui.settings
 
 import androidx.fragment.app.Fragment
 import com.abdurrahmanjun.runingapp.R

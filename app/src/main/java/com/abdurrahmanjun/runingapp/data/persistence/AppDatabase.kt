@@ -1,8 +1,9 @@
-package com.abdurrahmanjun.runingapp.db
+package com.abdurrahmanjun.runingapp.data.persistence
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.abdurrahmanjun.runingapp.data.persistence.models.Run
 
 @Database(
     entities = [Run::class],
@@ -10,6 +11,6 @@ import androidx.room.TypeConverters
 )
 
 @TypeConverters(Converters::class)
-abstract class RunningDatabase : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun getRunDAO(): RunDAO
 }
