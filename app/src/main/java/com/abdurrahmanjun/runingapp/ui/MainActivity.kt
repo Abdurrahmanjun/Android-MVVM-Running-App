@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity() {
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when(destination.id) {
-                    R.id.settingsFragment, R.id.runFragment, R.id.statisticFragment ->
+                    R.id.settingsFragment, R.id.statisticFragment ->
+                        bottomNavigationView.visibility = View.VISIBLE
+                    R.id.runFragment ->
                         bottomNavigationView.visibility = View.VISIBLE
                     else ->
                         bottomNavigationView.visibility = View.GONE
@@ -43,11 +45,6 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         navigateToTrackingFragmentIfNeeded(intent)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // menuInflater.inflate(R.menu.dashboard_menu,menu)
-        return super.onCreateOptionsMenu(menu)
     }
 
     private fun navigateToTrackingFragmentIfNeeded(intent: Intent?) {

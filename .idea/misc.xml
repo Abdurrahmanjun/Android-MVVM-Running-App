@@ -11,7 +11,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_run.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/fragment_setup.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_setup.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_statistics.xml" value="0.26458333333333334" />
         <entry key="app/src/main/res/layout/fragment_tracking.xml" value="0.26458333333333334" />
         <entry key="app/src/main/res/layout/item_run.xml" value="0.26458333333333334" />
