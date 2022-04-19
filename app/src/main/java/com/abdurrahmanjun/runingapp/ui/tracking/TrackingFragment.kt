@@ -14,7 +14,7 @@ import com.abdurrahmanjun.runingapp.Constants.POLYLINE_COLOR
 import com.abdurrahmanjun.runingapp.Constants.POLYLINE_WIDTH
 import com.abdurrahmanjun.runingapp.utils.TrackingUtility
 import com.abdurrahmanjun.runingapp.domain.services.Polyline
-import com.abdurrahmanjun.runingapp.domain.services.TrackingServices
+import com.abdurrahmanjun.runingapp.domain.services.TrackingService
 import com.abdurrahmanjun.runingapp.ui.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -38,7 +38,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         super.onViewCreated(view, savedInstanceState)
         mapView.onCreate(savedInstanceState)
         btnToggleRun.setOnClickListener {
-            toogleRun()
+            toggleRun()
         }
         mapView.getMapAsync {
             map = it
@@ -48,7 +48,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         subscribeToObservers()
     }
 
-    fun toogleRun() {
+    private fun toggleRun() {
         if (isTracking) {
             sendCommandToService(ACTION_PAUSE_SERVICE)
         } else {
@@ -57,17 +57,17 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     }
 
     private fun subscribeToObservers() {
-        TrackingServices.isTracking.observe(viewLifecycleOwner, Observer {
+        TrackingService.isTracking.observe(viewLifecycleOwner, Observer {
             updateTracking(it)
         })
 
-        TrackingServices.pathPoints.observe(viewLifecycleOwner, Observer {
+        TrackingService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
             addLatestPolyline()
             moveCameraUser()
         })
 
-        TrackingServices.timeRunInMillis.observe(viewLifecycleOwner, Observer {
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer {
             curTimeInMillis = it
             val formattedTime = TrackingUtility.getFormattedStopWatchTime(curTimeInMillis, true)
             tvTimer.text = formattedTime
@@ -120,7 +120,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     }
 
     private fun sendCommandToService(action: String) =
-        Intent(requireContext(), TrackingServices::class.java).also {
+        Intent(requireContext(), TrackingService::class.java).also {
             it.action = action
             requireContext().startService(it)
         }
