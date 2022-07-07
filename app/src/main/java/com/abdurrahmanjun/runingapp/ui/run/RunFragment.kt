@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.Constants.REQUEST_CODE_LOCATION_PERMISSION
+import com.abdurrahmanjun.runingapp.utils.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.abdurrahmanjun.runingapp.utils.TrackingUtility
 import com.abdurrahmanjun.runingapp.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_run.*

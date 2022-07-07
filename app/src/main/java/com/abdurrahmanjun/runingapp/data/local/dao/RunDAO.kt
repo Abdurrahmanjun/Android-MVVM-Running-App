@@ -1,32 +1,32 @@
-package com.abdurrahmanjun.runingapp.data.persistence
+package com.abdurrahmanjun.runingapp.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.abdurrahmanjun.runingapp.data.persistence.models.Run
+import com.abdurrahmanjun.runingapp.data.local.entity.RunEntity
 
 @Dao
 interface RunDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRun(run: Run)
+    suspend fun insertRun(runEntity: RunEntity)
 
     @Delete
-    suspend fun deleteRun(run: Run)
+    suspend fun deleteRun(runEntity: RunEntity)
 
     @Query("SELECT * FROM running_table ORDER BY timestamp DESC")
-    fun getAllRunsSortedByDate(): LiveData<List<Run>>
+    fun getAllRunsSortedByDate(): LiveData<List<RunEntity>>
 
     @Query("SELECT * FROM running_table ORDER BY timeInMillis DESC")
-    fun getAllRunsSortedByTimeInMillis(): LiveData<List<Run>>
+    fun getAllRunsSortedByTimeInMillis(): LiveData<List<RunEntity>>
 
     @Query("SELECT * FROM running_table ORDER BY caloriesBurned DESC")
-    fun getAllRunsSortedByCaloriesBurned(): LiveData<List<Run>>
+    fun getAllRunsSortedByCaloriesBurned(): LiveData<List<RunEntity>>
 
     @Query("SELECT * FROM running_table ORDER BY avgSpeedInKMH DESC")
-    fun getAllRunsSortedByAvgSpeed(): LiveData<List<Run>>
+    fun getAllRunsSortedByAvgSpeed(): LiveData<List<RunEntity>>
 
     @Query("SELECT * FROM running_table ORDER BY distanceInMeters DESC")
-    fun getAllRunsSortedByDistance(): LiveData<List<Run>>
+    fun getAllRunsSortedByDistance(): LiveData<List<RunEntity>>
 
     @Query("SELECT SUM(timeInMillis) FROM running_table")
     fun getTotalTimeInMillis(): LiveData<Long>

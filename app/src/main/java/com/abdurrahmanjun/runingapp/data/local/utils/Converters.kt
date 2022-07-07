@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp.data.persistence
+package com.abdurrahmanjun.runingapp.data.local.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

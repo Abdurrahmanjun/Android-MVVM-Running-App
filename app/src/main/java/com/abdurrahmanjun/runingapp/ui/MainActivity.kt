@@ -3,13 +3,12 @@ package com.abdurrahmanjun.runingapp.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.data.persistence.RunDAO
-import com.abdurrahmanjun.runingapp.Constants.ACTION_SHOW_TRACKING_FRAGMENT
+import com.abdurrahmanjun.runingapp.data.local.dao.RunDAO
+import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_SHOW_TRACKING_FRAGMENT
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject

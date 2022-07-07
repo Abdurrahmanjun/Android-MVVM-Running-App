@@ -1,4 +1,4 @@
-package com.abdurrahmanjun.runingapp
+package com.abdurrahmanjun.runingapp.utils
 
 import android.graphics.Color
 

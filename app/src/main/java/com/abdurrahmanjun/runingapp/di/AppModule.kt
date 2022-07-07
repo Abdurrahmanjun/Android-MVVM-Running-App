@@ -2,8 +2,8 @@ package com.abdurrahmanjun.runingapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.abdurrahmanjun.runingapp.data.persistence.AppDatabase
-import com.abdurrahmanjun.runingapp.Constants.RUNNING_DATABASE_NAME
+import com.abdurrahmanjun.runingapp.data.local.AppDatabase
+import com.abdurrahmanjun.runingapp.utils.Constants.RUNNING_DATABASE_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class PersistenceModule {
+object AppModule {
 
     @Singleton
     @Provides
