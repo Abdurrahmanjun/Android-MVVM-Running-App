@@ -14,4 +14,7 @@ class StatisticViewModel @Inject constructor(
     val totalDistance = mainRepository.getTotalDistance()
     val totalCaloriesBurned = mainRepository.getTotalCaloriesBurned()
     val totalAvgSpeed = mainRepository.getTotalAvgSpeed()
+
+    // Full history drives the Momentum stats screen (period aggregates, weekly chart, PB).
+    val runs = mainRepository.getAllRunsSortedByDate()
 }

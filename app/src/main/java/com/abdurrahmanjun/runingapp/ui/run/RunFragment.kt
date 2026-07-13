@@ -6,32 +6,35 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.Menu
-import android.view.MenuInflater
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.databinding.FragmentRunBinding
-import com.abdurrahmanjun.runingapp.ui.adapter.TrackingHistoryAdapter
-import com.abdurrahmanjun.runingapp.utils.TrackingUtility
+import com.abdurrahmanjun.runingapp.data.local.UserPreferences
 import com.abdurrahmanjun.runingapp.ui.MainViewModel
+import com.abdurrahmanjun.runingapp.ui.home.HomeScreen
+import com.abdurrahmanjun.runingapp.ui.theme.MomentumTheme
+import com.abdurrahmanjun.runingapp.utils.TrackingUtility
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class RunFragment : Fragment(R.layout.fragment_run) {
+class RunFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var _binding: FragmentRunBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var runAdapter: TrackingHistoryAdapter
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
@@ -41,31 +44,32 @@ class RunFragment : Fragment(R.layout.fragment_run) {
             }
         }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent {
+            MomentumTheme {
+                val runs by viewModel.mainRepository.getAllRunsSortedByDate().observeAsState(emptyList())
+                HomeScreen(
+                    userName = userPreferences.name,
+                    isMetric = userPreferences.isMetric,
+                    goalKm = userPreferences.weeklyGoalKm,
+                    runs = runs,
+                    now = System.currentTimeMillis(),
+                    onStartRun = {
+                        findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
+                    },
+                )
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentRunBinding.bind(view)
-
         requestPermissionsIfNeeded()
-        setHasOptionsMenu(true)
-        setupRecyclerView()
-
-        viewModel.mainRepository.getAllRunsSortedByDate().observe(viewLifecycleOwner) { runs ->
-            runAdapter.submitList(runs)
-        }
-
-        binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
-        }
-    }
-
-    private fun setupRecyclerView() = binding.rvRuns.apply {
-        runAdapter = TrackingHistoryAdapter()
-        adapter = runAdapter
-        layoutManager = LinearLayoutManager(requireContext())
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.dashboard_menu, menu)
     }
 
     private fun requestPermissionsIfNeeded() {
@@ -90,7 +94,7 @@ class RunFragment : Fragment(R.layout.fragment_run) {
 
     private fun showAppSettingsSnackbar() {
         Snackbar.make(
-            binding.root,
+            requireView(),
             "Location permission is required to track your runs.",
             Snackbar.LENGTH_LONG
         ).setAction("Settings") {
@@ -100,10 +104,5 @@ class RunFragment : Fragment(R.layout.fragment_run) {
                 }
             )
         }.show()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

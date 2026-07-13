@@ -1,48 +1,43 @@
 package com.abdurrahmanjun.runingapp.ui.statistic
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.abdurrahmanjun.runingapp.R
-import com.abdurrahmanjun.runingapp.databinding.FragmentStatisticsBinding
-import com.abdurrahmanjun.runingapp.utils.TrackingUtility
+import com.abdurrahmanjun.runingapp.data.local.UserPreferences
+import com.abdurrahmanjun.runingapp.ui.theme.MomentumTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.round
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class StatisticFragment : Fragment(R.layout.fragment_statistics) {
+class StatisticFragment : Fragment() {
 
     private val viewModel: StatisticViewModel by viewModels()
 
-    private var _binding: FragmentStatisticsBinding? = null
-    private val binding get() = _binding!!
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentStatisticsBinding.bind(view)
-        subscribeToObservers()
-    }
-
-    private fun subscribeToObservers() {
-        viewModel.totalTimeRun.observe(viewLifecycleOwner) { time ->
-            binding.tvTotalTime.text = TrackingUtility.getFormattedStopWatchTime(time ?: 0L)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent {
+            MomentumTheme {
+                val runs by viewModel.runs.observeAsState(emptyList())
+                StatsScreen(
+                    isMetric = userPreferences.isMetric,
+                    runs = runs,
+                    now = System.currentTimeMillis(),
+                )
+            }
         }
-        viewModel.totalDistance.observe(viewLifecycleOwner) { distance ->
-            val km = round((distance ?: 0) / 1000f * 10) / 10f
-            binding.tvTotalDistance.text = "${km}km"
-        }
-        viewModel.totalAvgSpeed.observe(viewLifecycleOwner) { speed ->
-            val rounded = round((speed ?: 0f) * 10) / 10f
-            binding.tvAverageSpeed.text = "${rounded}km/h"
-        }
-        viewModel.totalCaloriesBurned.observe(viewLifecycleOwner) { calories ->
-            binding.tvTotalCalories.text = "${calories ?: 0}kcal"
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
