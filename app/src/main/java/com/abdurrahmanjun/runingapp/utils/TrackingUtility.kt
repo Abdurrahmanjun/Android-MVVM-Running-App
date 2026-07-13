@@ -2,27 +2,21 @@ package com.abdurrahmanjun.runingapp.utils
 
 import android.Manifest
 import android.content.Context
-import android.os.Build
-import pub.devrel.easypermissions.EasyPermissions
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import java.util.concurrent.TimeUnit
 
 object TrackingUtility {
 
     fun hasLocationPermissions(context: Context) =
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            EasyPermissions.hasPermissions(
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        } else {
-            EasyPermissions.hasPermissions(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )
-        }
+            ) == PackageManager.PERMISSION_GRANTED
 
 
     fun getFormattedStopWatchTime(ms: Long, includeMillis: Boolean = false): String {

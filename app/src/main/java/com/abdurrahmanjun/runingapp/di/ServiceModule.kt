@@ -1,7 +1,7 @@
 package com.abdurrahmanjun.runingapp.di
 
 import android.content.Context
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +17,7 @@ object ServiceModule {
     @Provides
     fun provideFusedLocationProviderClient(
         @ApplicationContext app : Context
-    ) = FusedLocationProviderClient(app)
+    ) = LocationServices.getFusedLocationProviderClient(app)
 
     // todo provides pending intent
 
