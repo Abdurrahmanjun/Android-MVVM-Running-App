@@ -1,5 +1,6 @@
 package com.abdurrahmanjun.runingapp.ui.tracking
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -16,8 +17,10 @@ import com.abdurrahmanjun.runingapp.utils.TrackingUtility
 import com.abdurrahmanjun.runingapp.services.Polyline
 import com.abdurrahmanjun.runingapp.services.TrackingService
 import com.abdurrahmanjun.runingapp.ui.MainViewModel
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,10 +49,32 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         }
         binding.mapView.getMapAsync {
             map = it
+            enableMyLocation()
             addAllPolyline()
         }
 
         subscribeToObservers()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocation() {
+        if (!TrackingUtility.hasLocationPermissions(requireContext())) return
+        map?.isMyLocationEnabled = true
+        // One-shot: center on the last known position so the user sees where
+        // they are before starting a run. Skip if a run is already in progress.
+        if (pathPoints.all { it.isEmpty() }) {
+            LocationServices.getFusedLocationProviderClient(requireContext()).lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null && pathPoints.all { it.isEmpty() }) {
+                        map?.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(location.latitude, location.longitude),
+                                MAP_ZOOM
+                            )
+                        )
+                    }
+                }
+        }
     }
 
     private fun toggleRun() {

@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Secrets — real Maps/API keys live here, never commit.
+# local.defaults.properties (placeholder fallback) IS committed on purpose.
+secrets.properties
+*.keystore
+!debug.keystore
