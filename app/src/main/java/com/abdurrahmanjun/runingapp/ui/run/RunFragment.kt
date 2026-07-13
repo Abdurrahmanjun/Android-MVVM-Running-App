@@ -14,18 +14,24 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.abdurrahmanjun.runingapp.R
 import com.abdurrahmanjun.runingapp.databinding.FragmentRunBinding
+import com.abdurrahmanjun.runingapp.ui.adapter.TrackingHistoryAdapter
 import com.abdurrahmanjun.runingapp.utils.TrackingUtility
 import com.abdurrahmanjun.runingapp.ui.MainViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RunFragment : Fragment(R.layout.fragment_run) {
 
     private val viewModel: MainViewModel by viewModels()
 
     private var _binding: FragmentRunBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var runAdapter: TrackingHistoryAdapter
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
@@ -41,10 +47,21 @@ class RunFragment : Fragment(R.layout.fragment_run) {
 
         requestPermissionsIfNeeded()
         setHasOptionsMenu(true)
+        setupRecyclerView()
+
+        viewModel.mainRepository.getAllRunsSortedByDate().observe(viewLifecycleOwner) { runs ->
+            runAdapter.submitList(runs)
+        }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
         }
+    }
+
+    private fun setupRecyclerView() = binding.rvRuns.apply {
+        runAdapter = TrackingHistoryAdapter()
+        adapter = runAdapter
+        layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

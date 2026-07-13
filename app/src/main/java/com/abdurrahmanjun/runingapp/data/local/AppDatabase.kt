@@ -9,7 +9,7 @@ import com.abdurrahmanjun.runingapp.data.local.utils.Converters
 
 @Database(
     entities = [RunEntity::class],
-    version = 1
+    version = 2
 )
 
 @TypeConverters(Converters::class)

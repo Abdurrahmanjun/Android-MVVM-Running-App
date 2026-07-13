@@ -6,10 +6,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.abdurrahmanjun.runingapp.R
+import com.abdurrahmanjun.runingapp.data.local.UserPreferences
+import com.abdurrahmanjun.runingapp.data.local.entity.RunEntity
 import com.abdurrahmanjun.runingapp.databinding.FragmentTrackingBinding
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_PAUSE_SERVICE
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_STOP_SERVICE
 import com.abdurrahmanjun.runingapp.utils.Constants.MAP_ZOOM
 import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_COLOR
 import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_WIDTH
@@ -21,13 +25,20 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlin.math.round
 
 @AndroidEntryPoint
 class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     private val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     private var _binding: FragmentTrackingBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +57,10 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         binding.mapView.onCreate(savedInstanceState)
         binding.btnToggleRun.setOnClickListener {
             toggleRun()
+        }
+        binding.btnFinishRun.setOnClickListener {
+            zoomToWholeTrack()
+            endRunAndSaveToDb()
         }
         binding.mapView.getMapAsync {
             map = it
@@ -146,6 +161,62 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
                 )
             )
         }
+    }
+
+    // Fit the whole run in the viewport so the snapshot captures the full track.
+    private fun zoomToWholeTrack() {
+        val bounds = LatLngBounds.Builder()
+        var hasPoints = false
+        for (polyline in pathPoints) {
+            for (pos in polyline) {
+                bounds.include(pos)
+                hasPoints = true
+            }
+        }
+        if (!hasPoints) return
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(),
+                binding.mapView.width,
+                binding.mapView.height,
+                (binding.mapView.height * 0.05f).toInt()
+            )
+        )
+    }
+
+    private fun endRunAndSaveToDb() {
+        map?.snapshot { bmp ->
+            var distanceInMeters = 0
+            for (polyline in pathPoints) {
+                distanceInMeters += TrackingUtility.calculatePolylineLength(polyline).toInt()
+            }
+            val avgSpeed = if (curTimeInMillis > 0) {
+                round((distanceInMeters / 1000f) / (curTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+            } else 0f
+            val timestamp = System.currentTimeMillis()
+            val caloriesBurned = ((distanceInMeters / 1000f) * userPreferences.weightKg).toInt()
+            val run = RunEntity(
+                img = bmp,
+                timestamp = timestamp,
+                avgSpeedInKMH = avgSpeed,
+                distanceInMeters = distanceInMeters,
+                timeInMillis = curTimeInMillis,
+                caloriesBurned = caloriesBurned,
+                trace = TrackingService.timedTrace.toList()
+            )
+            viewModel.insertRun(run)
+            Snackbar.make(
+                requireActivity().findViewById(android.R.id.content),
+                "Run saved successfully",
+                Snackbar.LENGTH_LONG
+            ).show()
+            stopRun()
+        }
+    }
+
+    private fun stopRun() {
+        sendCommandToService(ACTION_STOP_SERVICE)
+        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
     }
 
     private fun sendCommandToService(action: String) =

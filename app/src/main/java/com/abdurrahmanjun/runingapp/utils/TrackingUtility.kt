@@ -3,10 +3,32 @@ package com.abdurrahmanjun.runingapp.utils
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.core.content.ContextCompat
+import com.abdurrahmanjun.runingapp.services.Polyline
 import java.util.concurrent.TimeUnit
 
 object TrackingUtility {
+
+    /**
+     * Total length of a single polyline (one continuous segment of a run) in
+     * meters, summed over the straight-line distance between consecutive fixes.
+     */
+    fun calculatePolylineLength(polyline: Polyline): Float {
+        var distance = 0f
+        for (i in 0 until polyline.size - 1) {
+            val pos1 = polyline[i]
+            val pos2 = polyline[i + 1]
+            val result = FloatArray(1)
+            Location.distanceBetween(
+                pos1.latitude, pos1.longitude,
+                pos2.latitude, pos2.longitude,
+                result
+            )
+            distance += result[0]
+        }
+        return distance
+    }
 
     fun hasLocationPermissions(context: Context) =
         ContextCompat.checkSelfPermission(

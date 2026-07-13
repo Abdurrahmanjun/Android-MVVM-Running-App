@@ -20,6 +20,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.abdurrahmanjun.runingapp.R
+import com.abdurrahmanjun.runingapp.data.model.TrackPoint
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_PAUSE_SERVICE
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_SHOW_TRACKING_FRAGMENT
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
@@ -60,11 +61,16 @@ class TrackingService : LifecycleService() {
         val timeRunInMillis = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
+
+        // Timestamped trace for the whole run, kept alongside pathPoints (which
+        // the map needs as plain LatLng). Persisted on finish for ETA replay.
+        val timedTrace = mutableListOf<TrackPoint>()
     }
 
     private fun postInitialValues() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
+        timedTrace.clear()
         timeRunInSeconds.postValue(0L)
         timeRunInMillis.postValue(0L)
     }
@@ -98,6 +104,7 @@ class TrackingService : LifecycleService() {
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.d("Service Stop!!")
+                    killService()
                 }
             }
         }
@@ -174,7 +181,16 @@ class TrackingService : LifecycleService() {
                 last().add(pos)
                 pathPoints.postValue(this)
             }
+            timedTrace.add(TrackPoint(location.latitude, location.longitude, location.time))
         }
+    }
+
+    private fun killService() {
+        isFirstRun = true
+        pauseService()
+        postInitialValues()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun addEmptyPolyline() = pathPoints.value?.apply {
