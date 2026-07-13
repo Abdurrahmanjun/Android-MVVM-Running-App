@@ -9,4 +9,15 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#FF018786</color>
     <color name="colorAccent">#FF03DAC5</color>
+
+    <!-- Momentum design tokens (mirror of ui/theme/MomentumColors for the XML/window layer) -->
+    <color name="momentum_ink">#08312C</color>
+    <color name="momentum_teal">#0F8C7E</color>
+    <color name="momentum_mint">#54D6BA</color>
+    <color name="momentum_lime">#D6F24E</color>
+    <color name="momentum_paper">#F4F7F5</color>
+    <color name="momentum_card">#FFFFFF</color>
+    <color name="momentum_muted">#6E827D</color>
+    <color name="momentum_line">#E7EDEB</color>
+    <color name="momentum_dark_map">#0A1512</color>
 </resources>

@@ -29,10 +29,19 @@ class UserPreferences @Inject constructor(
         get() = prefs.getBoolean(KEY_FIRST_OPEN, true)
         set(value) = prefs.edit { putBoolean(KEY_FIRST_OPEN, value) }
 
+    /** Measurement units: [UNITS_METRIC] (km) or [UNITS_IMPERIAL] (mi). */
+    var units: String
+        get() = prefs.getString(KEY_UNITS, UNITS_METRIC) ?: UNITS_METRIC
+        set(value) = prefs.edit { putString(KEY_UNITS, value) }
+
     companion object {
+        const val UNITS_METRIC = "metric"
+        const val UNITS_IMPERIAL = "imperial"
+
         private const val PREFS_NAME = "shared_pref"
         private const val KEY_NAME = "KEY_NAME"
         private const val KEY_WEIGHT = "KEY_WEIGHT"
         private const val KEY_FIRST_OPEN = "KEY_FIRST_OPEN"
+        private const val KEY_UNITS = "KEY_UNITS"
     }
 }

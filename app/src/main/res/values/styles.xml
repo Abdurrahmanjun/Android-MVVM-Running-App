@@ -1,16 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme (Momentum). -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/teal_200</item>
-        <item name="colorPrimaryVariant">@color/teal_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/momentum_teal</item>
+        <item name="colorPrimaryVariant">@color/momentum_ink</item>
+        <item name="colorOnPrimary">@color/momentum_card</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/purple_200</item>
-        <item name="colorSecondaryVariant">@color/purple_500</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="colorSecondary">@color/momentum_mint</item>
+        <item name="colorSecondaryVariant">@color/momentum_teal</item>
+        <item name="colorOnSecondary">@color/momentum_ink</item>
+        <!-- App surfaces. -->
+        <item name="android:windowBackground">@color/momentum_paper</item>
+        <item name="colorSurface">@color/momentum_card</item>
+        <item name="colorOnSurface">@color/momentum_ink</item>
+        <!-- Light status bar (paper background, dark icons). -->
+        <item name="android:statusBarColor">@color/momentum_paper</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 </resources>
