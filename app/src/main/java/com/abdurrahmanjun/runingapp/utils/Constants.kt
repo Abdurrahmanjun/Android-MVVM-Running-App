@@ -16,9 +16,12 @@ object Constants {
     const val LOCATION_UPDATE_INTERVAL = 5000L
     const val FASTEST_LOCATION_INTERVAL = 2000L
 
-    // Momentum: glowing mint route. A wide translucent underlay + bright core fakes the neon glow.
+    // Momentum night route: glowing mint. A wide translucent underlay + bright core fakes the neon glow.
     const val POLYLINE_COLOR = 0xFF5FE0C0.toInt()
     const val POLYLINE_GLOW_COLOR = 0x555FE0C0
+    // Day route: solid teal, softer underlay.
+    const val POLYLINE_DAY_COLOR = 0xFF0F8C7E.toInt()
+    const val POLYLINE_DAY_GLOW_COLOR = 0x330F8C7E
     const val POLYLINE_WIDTH = 14f
     const val POLYLINE_GLOW_WIDTH = 34f
     const val MAP_ZOOM = 16f

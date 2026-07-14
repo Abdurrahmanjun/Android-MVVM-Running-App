@@ -15,13 +15,14 @@ import com.abdurrahmanjun.runingapp.R
 import com.abdurrahmanjun.runingapp.data.local.UserPreferences
 import com.abdurrahmanjun.runingapp.data.local.entity.RunEntity
 import com.abdurrahmanjun.runingapp.databinding.FragmentTrackingBinding
-import com.abdurrahmanjun.runingapp.ui.theme.MomentumColors
 import com.abdurrahmanjun.runingapp.ui.theme.MomentumTheme
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_PAUSE_SERVICE
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.abdurrahmanjun.runingapp.utils.Constants.ACTION_STOP_SERVICE
 import com.abdurrahmanjun.runingapp.utils.Constants.MAP_ZOOM
 import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_COLOR
+import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_DAY_COLOR
+import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_DAY_GLOW_COLOR
 import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_GLOW_COLOR
 import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_GLOW_WIDTH
 import com.abdurrahmanjun.runingapp.utils.Constants.POLYLINE_WIDTH
@@ -63,6 +64,15 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     private var curDistanceMeters = 0
     private var lapCount = 0
 
+    // "Dark map at night" auto-switch: dark theme only when the setting is on AND it's night.
+    private val useDark: Boolean by lazy {
+        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        userPreferences.darkMapAtNight && (hour < 7 || hour >= 19)
+    }
+    private val liveColors: LiveRunColors get() = if (useDark) LiveRunColors.Night else LiveRunColors.Day
+    private val routeColor: Int get() = if (useDark) POLYLINE_COLOR else POLYLINE_DAY_COLOR
+    private val routeGlowColor: Int get() = if (useDark) POLYLINE_GLOW_COLOR else POLYLINE_DAY_GLOW_COLOR
+
     // Bridges the service observers into the Compose overlay.
     private val fmt get() = UnitFormatter(userPreferences.isMetric)
     private var liveState by mutableStateOf(
@@ -76,10 +86,15 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentTrackingBinding.bind(view)
 
+        // Day/night surface behind the map + matching status-bar icons.
+        binding.root.setBackgroundColor(if (useDark) 0xFF0A1512.toInt() else 0xFFF4F7F5.toInt())
+        applyStatusBarIcons(light = !useDark)
+
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync {
             map = it
-            it.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style_dark))
+            val styleRes = if (useDark) R.raw.map_style_dark else R.raw.map_style_light
+            it.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), styleRes))
             it.uiSettings.isMyLocationButtonEnabled = false
             it.uiSettings.isMapToolbarEnabled = false
             enableMyLocation()
@@ -88,7 +103,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
         binding.topOverlay.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent { MomentumTheme { LiveRunTopBar(gpsText = "GPS strong", onRecenter = ::recenter) } }
+            setContent { MomentumTheme { LiveRunTopBar(gpsText = "GPS strong", colors = liveColors, onRecenter = ::recenter) } }
         }
         binding.sheetOverlay.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -96,6 +111,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
                 MomentumTheme {
                     LiveRunSheet(
                         state = liveState,
+                        colors = liveColors,
                         onPauseResume = ::toggleRun,
                         onStop = { zoomToWholeTrack(); endRunAndSaveToDb() },
                         onLap = ::recordLap,
@@ -106,6 +122,12 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
         subscribeToObservers()
         updateLiveState()
+    }
+
+    private fun applyStatusBarIcons(light: Boolean) {
+        val window = requireActivity().window
+        androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = light
     }
 
     @SuppressLint("MissingPermission")
@@ -184,17 +206,17 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         )
     }
 
-    // Glow layer (wide translucent) drawn under the bright mint core.
-    private fun mintGlow(polyline: Polyline) = PolylineOptions()
-        .color(POLYLINE_GLOW_COLOR).width(POLYLINE_GLOW_WIDTH).addAll(polyline)
+    // Glow layer (wide translucent) drawn under the bright core. Colour follows day/night.
+    private fun routeGlow(polyline: Polyline) = PolylineOptions()
+        .color(routeGlowColor).width(POLYLINE_GLOW_WIDTH).addAll(polyline)
 
-    private fun mintCore(polyline: Polyline) = PolylineOptions()
-        .color(POLYLINE_COLOR).width(POLYLINE_WIDTH).addAll(polyline)
+    private fun routeCore(polyline: Polyline) = PolylineOptions()
+        .color(routeColor).width(POLYLINE_WIDTH).addAll(polyline)
 
     private fun addAllPolyline() {
         for (polyline in pathPoints) {
-            map?.addPolyline(mintGlow(polyline))
-            map?.addPolyline(mintCore(polyline))
+            map?.addPolyline(routeGlow(polyline))
+            map?.addPolyline(routeCore(polyline))
         }
         pathPoints.firstOrNull()?.firstOrNull()?.let { addStartDot(it) }
     }
@@ -202,8 +224,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     private fun addStartDot(point: LatLng) {
         map?.addCircle(
             CircleOptions().center(point).radius(6.0)
-                .fillColor(MomentumColors.MintBright.value.toInt())
-                .strokeColor(0x66FFFFFF).strokeWidth(4f)
+                .fillColor(routeColor)
+                .strokeColor(if (useDark) 0x66FFFFFF else 0x33FFFFFF).strokeWidth(4f)
         )
     }
 
@@ -211,8 +233,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         if (pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             val preLast = pathPoints.last()[pathPoints.last().size - 2]
             val last = pathPoints.last().last()
-            map?.addPolyline(PolylineOptions().color(POLYLINE_GLOW_COLOR).width(POLYLINE_GLOW_WIDTH).add(preLast).add(last))
-            map?.addPolyline(PolylineOptions().color(POLYLINE_COLOR).width(POLYLINE_WIDTH).add(preLast).add(last))
+            map?.addPolyline(PolylineOptions().color(routeGlowColor).width(POLYLINE_GLOW_WIDTH).add(preLast).add(last))
+            map?.addPolyline(PolylineOptions().color(routeColor).width(POLYLINE_WIDTH).add(preLast).add(last))
         }
     }
 
@@ -285,6 +307,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Restore the app-wide light status bar (paper background) when leaving the run screen.
+        applyStatusBarIcons(light = true)
         _binding = null
     }
 }
