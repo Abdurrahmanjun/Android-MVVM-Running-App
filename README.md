@@ -6,6 +6,22 @@ dig into your stats — all wrapped in the **"Momentum"** visual design.
 
 ---
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/onboarding.png" width="30%" alt="Onboarding" />
+  <img src="docs/screenshots/home.png" width="30%" alt="Home & History" />
+  <img src="docs/screenshots/live-run.png" width="30%" alt="Live Run (day)" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/stats.png" width="30%" alt="Stats" />
+  <img src="docs/screenshots/settings.png" width="30%" alt="Settings" />
+</p>
+
+<p align="center"><sub>Onboarding · Home &amp; History · Live Run (day &amp; night) · Stats · Settings</sub></p>
+
+---
+
 ## 🎨 Design — "Momentum"
 
 A teal/mint identity with a lime energy accent and a dark, neon-route treatment
@@ -75,9 +91,7 @@ Compose surface; a Compose bottom bar drives the shared `NavController`.
 - Real API integration (auth, run sync, `/eta`) — thin client against a
   contract-first backend
 
+
 ---
 
-## 📌 Contribution
-
-Feel free to star 🌟 or fork 🍴 this project if you find it helpful!
-Contributions and feedback are always welcome.
+*Built by Abdurrahman Jundullah M — mobile engineer (Flutter + native Android), 8+ years, fintech/banking background.*
